@@ -47,7 +47,7 @@ class Sequella::Plugin::Service
     ##
     # Access to activerecord plugin configuration
     def config
-      @config ||= Plugin.config
+      @config ||= ::Sequella::Plugin.config
     end
 
   end # class << self
