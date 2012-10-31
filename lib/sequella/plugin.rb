@@ -3,7 +3,7 @@ require 'sequel'
 class Sequella::Plugin < Adhearsion::Plugin
   extend ActiveSupport::Autoload
 
-  autoload :Service, 'adhearsion/sequella/plugin/service'
+  autoload :Service, 'sequella/plugin/service'
 
   # Configure a database to use Sequel-backed models.
   # See http://sequel.rubyforge.org/rdoc/classes/Sequel/Database.html
