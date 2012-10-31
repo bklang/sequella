@@ -17,12 +17,12 @@ class Sequella::Plugin < Adhearsion::Plugin
     password    ''               , :desc => 'valid database password'
     host        'localhost'      , :desc => 'host where the database is running'
     port        3306             , :desc => 'port where the database is listening'
-    model_paths []               , :desc => 'paths to model files to load'
+    model_paths []               , :desc => 'paths to model files to load', :transform => Proc.new {|v| Array(v)}
   end
 
   # Include the ActiveRecord service in plugins initialization process
   init :sequella do
-    Service.start
+    Service.start Adhearsion.config[:sequella]
   end
 
 end

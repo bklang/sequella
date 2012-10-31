@@ -3,13 +3,13 @@ class Sequella::Plugin::Service
 
     ##
     # Start the Sequel connection with the configured database
-    def start
+    def start(config)
       raise "Must supply an adapter argument to the Sequel configuration" if (config.adapter.nil? || config.adapter.empty?)
 
       params = config.__values.select { |k,v| !v.nil? }
 
-      require_models(*params.delete(:model_paths))
       @connection = establish_connection params
+      require_models(*params.delete(:model_paths))
 
       # Provide Sequel a handle on the Adhearsion logger
       params[:loggers] = Array(params[:loggers]) << logger
@@ -23,8 +23,6 @@ class Sequella::Plugin::Service
       logger.warn "Todo: Close down Sequel connections"
     end
 
-    private
-
     def create_call_hook_for_connection_cleanup
       # There does not seem to be an equivalent in Sequel
       #Adhearsion::Events.punchblock Punchblock::Event::Offer  do
@@ -33,7 +31,21 @@ class Sequella::Plugin::Service
     end
 
     def require_models(*paths)
-      paths.each { |model| require model }
+      paths.each do |path|
+        path = qualify_path path
+        logger.debug "Loading Sequel models from #{path}"
+        Dir.glob("#{path}/*.rb") do |model|
+          require model
+        end
+      end
+    end
+
+    def qualify_path(path)
+      if path =~ /^\//
+        path
+      else
+        File.join Adhearsion.root, path
+      end
     end
 
     ##
@@ -42,12 +54,6 @@ class Sequella::Plugin::Service
     # @param params [Hash] Options to establish the database connection
     def establish_connection(params)
       ::Sequel.connect params
-    end
-
-    ##
-    # Access to activerecord plugin configuration
-    def config
-      @config ||= ::Sequella::Plugin.config
     end
 
   end # class << self
