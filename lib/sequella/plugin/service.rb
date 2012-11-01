@@ -1,4 +1,6 @@
 class Sequella::Plugin::Service
+  cattr_accessor :connection
+
   class << self
 
     ##
@@ -8,7 +10,7 @@ class Sequella::Plugin::Service
 
       params = config.__values.select { |k,v| !v.nil? }
 
-      @connection = establish_connection params
+      @@connection = establish_connection params
       require_models(*params.delete(:model_paths))
 
       # Provide Sequel a handle on the Adhearsion logger
