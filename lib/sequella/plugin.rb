@@ -32,7 +32,6 @@ class Sequella::Plugin < Adhearsion::Plugin
         Service.start Adhearsion.config[:sequella]
         Sequel.extension :migration
         Sequel::Migrator.run Sequella::Plugin::Service.connection, File.join(Adhearsion.root, 'db', 'migrations'), :use_transactions=>true
-
       end
     end
   end
