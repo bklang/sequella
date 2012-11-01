@@ -20,7 +20,6 @@ class Sequella::Plugin < Adhearsion::Plugin
     model_paths []               , :desc => 'paths to model files to load', :transform => Proc.new {|v| Array(v)}
   end
 
-  # Include the ActiveRecord service in plugins initialization process
   init :sequella do
     Service.start Adhearsion.config[:sequella]
   end
