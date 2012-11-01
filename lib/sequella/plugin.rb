@@ -26,7 +26,7 @@ class Sequella::Plugin < Adhearsion::Plugin
   end
 
   tasks do
-    namespace :sequilla do
+    namespace :sequella do
       desc "Run Sequel migrations"
       task :migrate do
         Sequel.extension :migration
