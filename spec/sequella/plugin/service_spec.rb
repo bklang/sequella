@@ -1,7 +1,15 @@
 require 'spec_helper'
+require 'ostruct'
 
 describe Sequella::Plugin::Service do
   subject { Sequella::Plugin::Service }
+
+  describe '#start' do
+    it 'should raise if start attempted without an adapter specified' do
+      config = OpenStruct.new
+      expect { subject.start config }.to raise_error
+    end
+  end
 
   describe '#qualify_path' do
     it 'should not alter a path that begins with "/"' do
