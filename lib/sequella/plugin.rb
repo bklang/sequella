@@ -3,7 +3,7 @@ require 'sequel'
 class Sequella::Plugin < Adhearsion::Plugin
   extend ActiveSupport::Autoload
 
-  autoload :Service, 'adhearsion/activerecord/plugin/service'
+  autoload :Service, 'sequella/plugin/service'
 
   # Configure a database to use Sequel-backed models.
   # See http://sequel.rubyforge.org/rdoc/classes/Sequel/Database.html
@@ -17,12 +17,22 @@ class Sequella::Plugin < Adhearsion::Plugin
     password    ''               , :desc => 'valid database password'
     host        'localhost'      , :desc => 'host where the database is running'
     port        3306             , :desc => 'port where the database is listening'
-    model_paths []               , :desc => 'paths to model files to load'
+    model_paths []               , :desc => 'paths to model files to load', :transform => Proc.new {|v| Array(v)}
   end
 
-  # Include the ActiveRecord service in plugins initialization process
   init :sequella do
-    Service.start
+    Service.start Adhearsion.config[:sequella]
   end
 
+  tasks do
+    namespace :sequella do
+      desc "Run Sequel migrations"
+      task :migrate => :environment do
+        Service.start Adhearsion.config[:sequella]
+        Sequel.extension :migration
+        Sequel::Migrator.run Sequella::Plugin::Service.connection, File.join(Adhearsion.root, 'db', 'migrations'), :use_transactions=>true
+        puts "Successfully migrated database"
+      end
+    end
+  end
 end
