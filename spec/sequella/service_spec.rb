@@ -1,8 +1,8 @@
 require 'spec_helper'
 require 'ostruct'
 
-describe Sequella::Plugin::Service do
-  subject { Sequella::Plugin::Service }
+describe Sequella::Service do
+  subject { Sequella::Service }
 
   describe '#start' do
     it 'should raise if start attempted without an adapter specified' do

@@ -1,10 +1,7 @@
 require 'sequel'
+require 'sequella/service'
 
 class Sequella::Plugin < Adhearsion::Plugin
-  extend ActiveSupport::Autoload
-
-  autoload :Service, 'sequella/plugin/service'
-
   # Configure a database to use Sequel-backed models.
   # See http://sequel.rubyforge.org/rdoc/classes/Sequel/Database.html
   #
@@ -30,7 +27,7 @@ class Sequella::Plugin < Adhearsion::Plugin
       task :migrate => :environment do
         Service.start Adhearsion.config[:sequella]
         Sequel.extension :migration
-        Sequel::Migrator.run Sequella::Plugin::Service.connection, File.join(Adhearsion.root, 'db', 'migrations'), :use_transactions=>true
+        Sequel::Migrator.run Sequella::Service.connection, File.join(Adhearsion.root, 'db', 'migrations'), :use_transactions=>true
         puts "Successfully migrated database"
       end
     end
