@@ -19,14 +19,14 @@ module Sequella
     end
 
     init :sequella do
-      Service.start Adhearsion.config[:sequella]
+      Sequella::Service.start Adhearsion.config[:sequella]
     end
 
     tasks do
       namespace :sequella do
         desc "Run Sequel migrations"
         task :migrate => :environment do
-          Service.start Adhearsion.config[:sequella]
+          Sequella::Service.start Adhearsion.config[:sequella]
           Sequel.extension :migration
           Sequel::Migrator.run Sequella::Service.connection, File.join(Adhearsion.root, 'db', 'migrations'), :use_transactions=>true
           puts "Successfully migrated database"
