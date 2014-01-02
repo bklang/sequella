@@ -27,4 +27,4 @@ Gem::Specification.new do |s|
   s.add_development_dependency %q<guard-rspec>
   s.add_development_dependency %q<simplecov>
   s.add_development_dependency %q<simplecov-rcov>
- end
+end

@@ -19,18 +19,28 @@ module Sequella
     end
 
     init :sequella do
-      Service.start Adhearsion.config[:sequella]
+      Sequella::Service.start Adhearsion.config[:sequella]
     end
 
     tasks do
       namespace :sequella do
         desc "Run Sequel migrations"
         task :migrate => :environment do
-          Service.start Adhearsion.config[:sequella]
+          Sequella::Service.start Adhearsion.config[:sequella]
           Sequel.extension :migration
-          Sequel::Migrator.run Sequella::Service.connection, File.join(Adhearsion.root, 'db', 'migrations'), :use_transactions=>true
+          Sequel::Migrator.run Sequella::Service.connection, File.join(Adhearsion.root, 'db', 'migrations'), :use_transactions => true
           puts "Successfully migrated database"
         end
+
+        desc "Drop all tables in the database"
+        task :nuke => :environment do
+          Sequella::Service.start Adhearsion.config[:sequella]
+          Sequella::Service.connection.tables.each { |t| Sequella::Service.connection.drop_table t }
+          puts "Successfully dropped all tables in the database"
+        end
+
+        desc "nuke and then migrate"
+        task :reset => [:nuke, :migrate]
       end
     end
   end
