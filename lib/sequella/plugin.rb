@@ -30,9 +30,19 @@ class Sequella::Plugin < Adhearsion::Plugin
       task :migrate => :environment do
         Service.start Adhearsion.config[:sequella]
         Sequel.extension :migration
-        Sequel::Migrator.run Sequella::Plugin::Service.connection, File.join(Adhearsion.root, 'db', 'migrations'), :use_transactions=>true
+        Sequel::Migrator.run Sequella::Plugin::Service.connection, File.join(Adhearsion.root, 'db', 'migrations'), :use_transactions => true
         puts "Successfully migrated database"
       end
+
+      desc "Drop all tables in the database"
+      task :clean => :environment do
+        Service.start Adhearsion.config[:sequella]
+        Service.connection.tables.each { |t| Service.connection.drop_table t }
+        logger.info "Successfully dropped all tables in the database"
+      end
+
+      desc "clean and then migrate"
+      task :reset => [:clean, :migrate]
     end
   end
 end
