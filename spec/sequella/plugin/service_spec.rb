@@ -40,14 +40,14 @@ describe Sequella::Plugin::Service do
         }
       }
 
-      it 'mri' do
+      it 'is mri' do
         stub_const('RUBY_PLATFORM', 'x86_64-linux')
 
         connection_string = subject.connection_string connection_params
         expect(connection_string).to eq('postgres://localhost:5432/test?user=test-user&password=password')
       end
 
-      it 'jruby' do
+      it 'is jruby' do
         stub_const('RUBY_PLATFORM', 'java')
 
         connection_string = subject.connection_string connection_params
