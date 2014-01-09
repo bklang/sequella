@@ -5,9 +5,54 @@ describe Sequella::Plugin::Service do
   subject { Sequella::Plugin::Service }
 
   describe '#start' do
-    it 'should raise if start attempted without an adapter specified' do
-      config = OpenStruct.new
-      expect { subject.start config }.to raise_error
+    it 'should not raise an error if start attempted with a uri specified' do
+      config = OpenStruct.new uri: 'postgres://user:password@localhost/blog'
+      subject.should_receive(:establish_connection).with(config.uri)
+      subject.should_receive(:require_models)
+
+      expect { subject.start config.marshal_dump }.to_not raise_error
+    end
+  end
+
+  describe '#connection_string' do
+    it 'should use uri if specified in params' do
+      params = { uri: 'this-is-a-connection-uri' }
+
+      connection_string = subject.connection_string params
+      expect(connection_string).to eq(params[:uri])
+    end
+
+    it 'should raise error if adapter is not specified' do
+      params = { }
+
+      expect { subject.connection_string(params) }.to raise_error 'Must supply an adapter argument to the Sequel configuration'
+    end
+
+    context 'for ruby platform' do
+      let(:connection_params) {
+        {
+          adapter: 'postgres',
+          host: 'localhost',
+          port: 5432,
+          database: 'test',
+          username: 'test-user',
+          password: 'password'
+        }
+      }
+
+      it 'mri' do
+        stub_const('RUBY_PLATFORM', 'x86_64-linux')
+
+        connection_string = subject.connection_string connection_params
+        expect(connection_string).to eq('postgres://localhost:5432/test?user=test-user&password=password')
+      end
+
+      it 'jruby' do
+        stub_const('RUBY_PLATFORM', 'java')
+
+        connection_string = subject.connection_string connection_params
+        expect(connection_string).to eq('jdbc:postgres://localhost:5432/test?user=test-user&password=password')
+      end
     end
   end
 

@@ -11,6 +11,7 @@ class Sequella::Plugin < Adhearsion::Plugin
   # MySQL options are preconfigured. If you want o use another adapter, make sure to include the
   # required options in your configuration file
   config :sequella do
+    uri         ''               , :desc => 'URI to the database instance. Use this or specify each piece of connection information separately below.'
     adapter     'mysql'          , :desc => 'Database adapter. It should be an adapter supported by Sequel'
     database    'test'           , :desc => 'Database name'
     username    'admin'          , :desc => 'valid database username'
@@ -31,7 +32,7 @@ class Sequella::Plugin < Adhearsion::Plugin
         Service.start Adhearsion.config[:sequella]
         Sequel.extension :migration
         Sequel::Migrator.run Sequella::Plugin::Service.connection, File.join(Adhearsion.root, 'db', 'migrations'), :use_transactions => true
-        puts "Successfully migrated database"
+        logger.info "Successfully migrated database"
       end
 
       desc "Drop all tables in the database"
