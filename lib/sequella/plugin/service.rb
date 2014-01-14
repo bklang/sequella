@@ -64,7 +64,7 @@ class Sequella::Plugin::Service
       return params[:uri] unless params[:uri].blank?
       raise "Must supply an adapter argument to the Sequel configuration" if params[:adapter].blank?
 
-      "#{params[:adapter]}://#{params[:username]}:#{params[:password]}@#{"#{params[:host]}:#{params[:port]}/#{params[:database]}"}"
+      "#{params[:adapter]}://#{params[:username]}:#{params[:password]}@#{params[:host]}:#{params[:port]}/#{params[:database]}"
     end
 
   end # class << self
