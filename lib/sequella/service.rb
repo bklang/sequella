@@ -3,15 +3,12 @@ module Sequella
     cattr_accessor :connection
 
     class << self
-
       ##
       # Start the Sequel connection with the configured database
       def start(config)
-        raise "Must supply an adapter argument to the Sequel configuration" if (config.adapter.nil? || config.adapter.empty?)
+        params = config.to_hash.select { |k, v| !v.nil? }
 
-        params = config.to_hash.select { |k,v| !v.nil? }
-
-        @@connection = establish_connection params
+        @@connection = establish_connection connection_string(params)
         require_models(*params.delete(:model_paths))
 
         # Provide Sequel a handle on the Adhearsion logger
@@ -54,9 +51,21 @@ module Sequella
       ##
       # Start the Sequel connection with the configured database
       #
+      # @param connection_uri [String] Connection URI for connecting to the database
+      def establish_connection(connection_uri)
+        logger.info "Sequella connecting: #{connection_uri}"
+        ::Sequel.connect connection_uri
+      end
+
+      ##
+      # Construct the database connection string for Sequel
+      #
       # @param params [Hash] Options to establish the database connection
-      def establish_connection(params)
-        ::Sequel.connect params
+      def connection_string(params)
+        return params[:uri] unless params[:uri].blank?
+        raise "Must supply an adapter argument to the Sequel configuration" if params[:adapter].blank?
+
+        "#{params[:adapter]}://#{params[:username]}:#{params[:password]}@#{params[:host]}:#{params[:port]}/#{params[:database]}"
       end
 
     end # class << self
