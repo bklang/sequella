@@ -28,32 +28,18 @@ describe Sequella::Plugin::Service do
       expect { subject.connection_string(params) }.to raise_error 'Must supply an adapter argument to the Sequel configuration'
     end
 
-    context 'for ruby platform' do
-      let(:connection_params) {
-        {
-          adapter: 'postgres',
-          host: 'localhost',
-          port: 5432,
-          database: 'test',
-          username: 'test-user',
-          password: 'password'
-        }
+    it 'should build successfully' do
+      connection_params = {
+        adapter: 'postgres',
+        host: 'localhost',
+        port: 5432,
+        database: 'test',
+        username: 'test-user',
+        password: 'password'
       }
 
-
-      it 'is mri' do
-        stub_const('RUBY_PLATFORM', 'x86_64-linux')
-
-        connection_string = subject.connection_string connection_params
-        expect(connection_string).to eq('postgres://test-user:password@localhost:5432/test')
-      end
-
-      it 'is jruby' do
-        stub_const('RUBY_PLATFORM', 'java')
-
-        connection_string = subject.connection_string connection_params
-        expect(connection_string).to eq('jdbc:postgres://test-user:password@localhost:5432/test')
-      end
+      connection_string = subject.connection_string connection_params
+      expect(connection_string).to eq('postgres://test-user:password@localhost:5432/test')
     end
   end
 
