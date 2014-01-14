@@ -66,7 +66,7 @@ class Sequella::Plugin::Service
       raise "Must supply an adapter argument to the Sequel configuration" if params[:adapter].blank?
 
       adapter_with_prefix = ((RUBY_PLATFORM =~ /java/) ? 'jdbc:' : '') + params[:adapter]
-      "#{adapter_with_prefix}://#{params[:host]}:#{params[:port]}/#{params[:database]}?user=#{params[:username]}&password=#{params[:password]}"
+      "#{adapter_with_prefix}://#{params[:username]}:#{params[:password]}@#{params[:host]}:#{params[:port]}/#{params[:database]}"
     end
 
   end # class << self
