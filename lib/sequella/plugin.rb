@@ -16,7 +16,7 @@ module Sequella
       password    ''               , :desc => 'valid database password'
       host        'localhost'      , :desc => 'host where the database is running'
       port        3306             , :desc => 'port where the database is listening'
-      model_paths []               , :desc => 'paths to model files to load', :transform => Proc.new {|v| Array(v)}
+      model_paths ['app/models']   , :desc => 'paths to model files to load', :transform => Proc.new {|v| Array(v)}
     end
 
     run :sequella do
