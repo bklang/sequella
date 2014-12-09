@@ -19,7 +19,7 @@ module Sequella
       model_paths []               , :desc => 'paths to model files to load', :transform => Proc.new {|v| Array(v)}
     end
 
-    init :sequella do
+    run :sequella do
       Service.start Adhearsion.config[:sequella]
     end
 
