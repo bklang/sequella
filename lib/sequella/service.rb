@@ -11,7 +11,7 @@ module Sequella
         max_connections = params[:max_connections]||4
         pool_timeout = params[:pool_timeout]||5
 
-        @@connection = establish_connection connection_string(params,max_connections,pool_timeout)
+        @@connection = establish_connection(connection_string(params),max_connections,pool_timeout)
         require_models(*params.delete(:model_paths))
 
         # Provide Sequel a handle on the Adhearsion logger

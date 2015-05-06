@@ -7,10 +7,28 @@ describe Sequella::Service do
   describe '#start' do
     it 'should not raise an error if start attempted with a uri specified' do
       config = OpenStruct.new uri: 'postgres://user:password@localhost/blog'
-      subject.should_receive(:establish_connection).with(config.uri)
+      subject.should_receive(:establish_connection).with(config.uri,4,5)
       subject.should_receive(:require_models)
 
       expect { subject.start config.marshal_dump }.to_not raise_error
+    end
+    it 'should pass configured pool value' do
+      connection_params = {
+        adapter: 'postgres',
+        host: 'localhost',
+        port: 5432,
+        database: 'test',
+        username: 'test-user',
+        password: 'password',
+        max_connections: 20,
+        pool_timeout: 10
+      }
+
+      subject.should_receive(:establish_connection).with('postgres://test-user:password@localhost:5432/test',20,10)
+      subject.should_receive(:require_models)
+
+      expect { subject.start connection_params }.to_not raise_error
+
     end
   end
 
