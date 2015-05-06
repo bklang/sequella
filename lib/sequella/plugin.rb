@@ -17,6 +17,8 @@ module Sequella
       host        'localhost'      , :desc => 'host where the database is running'
       port        3306             , :desc => 'port where the database is listening'
       model_paths ['app/models']   , :desc => 'paths to model files to load', :transform => Proc.new {|v| Array(v)}
+      max_connections 4            , :desc => 'The maximum number of connections the connection pool will open'
+      pool_timeout    5            , :desc => ' The amount of seconds to wait to acquire a connection before raising a PoolTimeoutError'
     end
 
     run :sequella do

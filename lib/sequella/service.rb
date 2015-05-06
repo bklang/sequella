@@ -7,8 +7,11 @@ module Sequella
       # Start the Sequel connection with the configured database
       def start(config)
         params = config.to_hash.select { |k, v| !v.nil? }
+        # using sequel default values.
+        max_connections = params[:max_connections]||4
+        pool_timeout = params[:pool_timeout]||5
 
-        @@connection = establish_connection connection_string(params)
+        @@connection = establish_connection(connection_string(params),max_connections,pool_timeout)
         require_models(*params.delete(:model_paths))
 
         # Provide Sequel a handle on the Adhearsion logger
@@ -52,9 +55,9 @@ module Sequella
       # Start the Sequel connection with the configured database
       #
       # @param connection_uri [String] Connection URI for connecting to the database
-      def establish_connection(connection_uri)
+      def establish_connection(connection_uri, max_connections, pool_timeout)
         logger.info "Sequella connecting: #{connection_uri}"
-        ::Sequel.connect connection_uri
+        ::Sequel.connect connection_uri, :max_connections => max_connections, :pool_timeout => pool_timeout
       end
 
       ##
