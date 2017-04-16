@@ -26,16 +26,14 @@ module Sequella
     tasks do
       namespace :sequella do
         desc "Run Sequel migrations"
-        task :migrate => :environment do
-          Service.start Adhearsion.config[:sequella]
+        task :migrate do
           Sequel.extension :migration
           Sequel::Migrator.run Sequella::Service.connection, File.join(Adhearsion.root, 'db', 'migrations'), :use_transactions => true
           puts "Successfully migrated database"
         end
 
         desc "Drop all tables in the database"
-        task :clean => :environment do
-          Service.start Adhearsion.config[:sequella]
+        task :clean do
           Service.connection.tables.each { |t| Service.connection.drop_table t }
           logger.info "Successfully dropped all tables in the database"
         end
